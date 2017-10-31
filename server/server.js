@@ -52,6 +52,20 @@ app.get('/todos',(req,res)=>{
     });
 });
 
+app.delete('/todos/:id',(req,res)=>{
+    if(!ObjectID.isValid(req.params.id)){
+        res.status(404).send();
+    }
+    Todo.findByIdAndRemove(req.params.id).then((todo)=>{
+        if(!todo){
+            res.status(404).send();
+        }
+        res.send(todo);
+    }).catch(err=>{
+        res.status(400).send();
+    });
+});
+
 app.listen(port,()=>{
     console.log("Serve run at localhost:"+port);
 });
