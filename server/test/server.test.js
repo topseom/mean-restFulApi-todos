@@ -117,7 +117,17 @@ describe('DELTE /todos/:id',()=>{
             .expect((res)=>{
                 expect(res.body.text).toBe(todos[0].text);
             })
-            .end(done);
+            .end((err,res)=>{
+                if(err){
+                    return done(err);
+                }
+                Todo.findById(todos[0]._id.toHexString()).then(todo=>{
+                    expect(todo).toNoExist();
+                    done();
+                },err=>{
+                    done(err);
+                })
+            });
     });
 
     it('should return 404 if todo notfound',(done)=>{
