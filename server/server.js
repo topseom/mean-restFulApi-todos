@@ -1,63 +1,46 @@
-var mongoose = require('mongoose');
+const express = require('express');
+const bodyParser = require('body-parser');
+
+var {mongoose} = require('./db/mongoose');
+var {Todo} = require('./models/todo');
+var {User} = require('./models/user');
+
+var app = express();
+var port = process.env.PORT || 3000;
+app.use(bodyParser.json());
 
 
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/TodoApp');
 
-var Todo = mongoose.model('Todo',{
-    text:{
-        type: String,
-        required: true,
-        minlength: 1,
-        trim:true
-    },
-    completed:{
-        type: Boolean,
-        default: false
-    },
-    completedAt:{
-        type: Number,
-        default:null
-    }
+// app.get('/',(req,res)=>{
+//     res.send("Hello World");
+// });
+
+app.post('/todos',(req,res)=>{
+    var todo = new Todo({
+        text:req.body.text
+    });
+    todo.save().then((doc)=>{
+        res.send(doc);
+    },(e)=>{
+        res.status(400).send(e);
+    });
 });
 
-var User = mongoose.model('User',{
-    email:{
-        type: String,
-        trim:true,
-        minlength:1,
-        required:true
-    },
-    password:{
+app.get('/todos',(req,res)=>{
+    //res.send(Todo.find({}));
+});
 
-    }
-})
+app.listen(port,()=>{
+    console.log("Serve run at localhost:"+port);
+});
 
-// var newTodo = new Todo({
-//     text: 'Cook dinner'
-// });
+// var user = new User({
+//     email:"topseom@gmail.com"
+// })
 
-// newTodo.save().then((doc)=>{
-//     console.log('Save todo',doc);
-// },(e)=>{
-//     console.log('Unable to save');
-// });
-
-// var otherTodo = new Todo({text:' Edit the video'});
-
-// otherTodo.save().then((doc)=>{
+// user.save().then((doc)=>{
 //     console.log(JSON.stringify(doc,undefined,2));
 // },(e)=>{
 //     console.log('Unable to save',e);
 // });
-
-var user = new User({
-    email:"topseom@gmail.com"
-})
-
-user.save().then((doc)=>{
-    console.log(JSON.stringify(doc,undefined,2));
-},(e)=>{
-    console.log('Unable to save',e);
-});
 
