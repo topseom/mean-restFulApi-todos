@@ -1,9 +1,7 @@
 var env = process.env.NODE_ENV || 'development';
 if(env == 'development'){
-    process.env.PORT = 3000;
     process.env.MONGODB_URI = 'mongodb://localhost:27017/TodoApp';
 }else if(env == 'test'){
-    process.env.PORT = 3000;
     process.env.MONGODB_URI = 'mongodb://localhost:27017/TodoAppTest';
 }else if(env == 'production'){
     process.env.MONGODB_URI = 'mongodb://monchai:seven77889900@ds243805.mlab.com:43805/demo-todo';
@@ -28,7 +26,7 @@ app.use(bodyParser.json());
 //     res.send("Hello World");
 // });
 
-app.post('/todos',(req,res)=>{
+app.post('api/todos',(req,res)=>{
     var todo = new Todo({
         text:req.body.text
     });
@@ -38,8 +36,7 @@ app.post('/todos',(req,res)=>{
         res.status(400).send(e);
     });
 });
-
-app.get('/todos/:id',(req,res)=>{
+app.get('api/todos/:id',(req,res)=>{
     if(!ObjectID.isValid(req.params.id)){
         res.status(404).send();
     }
@@ -53,7 +50,7 @@ app.get('/todos/:id',(req,res)=>{
     });
 });
 
-app.get('/todos',(req,res)=>{
+app.get('api/todos',(req,res)=>{
     Todo.find().then((todos)=>{
         if(!todos){
             res.status(404).send({});
@@ -64,7 +61,7 @@ app.get('/todos',(req,res)=>{
     });
 });
 
-app.delete('/todos/:id',(req,res)=>{
+app.delete('api/todos/:id',(req,res)=>{
     if(!ObjectID.isValid(req.params.id)){
         res.status(404).send();
     }
@@ -78,7 +75,7 @@ app.delete('/todos/:id',(req,res)=>{
     });
 });
 
-app.patch('/todos/:id',(req,res)=>{
+app.patch('api/todos/:id',(req,res)=>{
     var id = req.params.id;
     var body = _.pick(req.body,['text','completed']);
     if(!ObjectID.isValid(id)){
