@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 //     res.send("Hello World");
 // });
 
-app.post('api/todos',(req,res)=>{
+app.post('/api/todos',(req,res)=>{
     var todo = new Todo({
         text:req.body.text
     });
@@ -36,7 +36,7 @@ app.post('api/todos',(req,res)=>{
         res.status(400).send(e);
     });
 });
-app.get('api/todos/:id',(req,res)=>{
+app.get('/api/todos/:id',(req,res)=>{
     if(!ObjectID.isValid(req.params.id)){
         res.status(404).send();
     }
@@ -50,7 +50,7 @@ app.get('api/todos/:id',(req,res)=>{
     });
 });
 
-app.get('api/todos',(req,res)=>{
+app.get('/api/todos',(req,res)=>{
     Todo.find().then((todos)=>{
         if(!todos){
             res.status(404).send({});
@@ -61,7 +61,7 @@ app.get('api/todos',(req,res)=>{
     });
 });
 
-app.delete('api/todos/:id',(req,res)=>{
+app.delete('/api/todos/:id',(req,res)=>{
     if(!ObjectID.isValid(req.params.id)){
         res.status(404).send();
     }
@@ -75,7 +75,7 @@ app.delete('api/todos/:id',(req,res)=>{
     });
 });
 
-app.patch('api/todos/:id',(req,res)=>{
+app.patch('/api/todos/:id',(req,res)=>{
     var id = req.params.id;
     var body = _.pick(req.body,['text','completed']);
     if(!ObjectID.isValid(id)){
