@@ -31,7 +31,7 @@ describe('POST /todos',()=>{
     it('should create a new todo',(done)=>{
         var text = 'Test todo text';
         request(app)
-            .post('/todos')
+            .post('/api/todos')
             .send({text})
             .expect(200)
             .expect((res)=>{
@@ -53,7 +53,7 @@ describe('POST /todos',()=>{
 
     it('should not create todo with invalid body data',(done)=>{
         request(app)
-        .post('/todos')
+        .post('/api/todos')
         .send({})
         .expect(400)
         .end((err,res)=>{
@@ -74,7 +74,7 @@ describe('POST /todos',()=>{
 describe('GET /todos',()=>{
     it('should get all todos',(done)=>{
         request(app)
-            .get('/todos')
+            .get('/api/todos')
             .expect(200)
             .expect((res)=>{
                 expect(res.body.length).toBe(2)
@@ -86,7 +86,7 @@ describe('GET /todos',()=>{
 describe('GET /todos/:id',()=>{
     it('should return todo doc',(done)=>{
         request(app)
-            .get(`/todos/${todos[0]._id.toHexString()}`)
+            .get(`/api/todos/${todos[0]._id.toHexString()}`)
             .expect(200)
             .expect((res)=>{
                 expect(res.body.text).toBe(todos[0].text);
@@ -96,14 +96,14 @@ describe('GET /todos/:id',()=>{
 
     it('should return 404 if todo notfound',(done)=>{
         request(app)
-            .get(`/todos/${new ObjectID().toHexString()}`)
+            .get(`/api/todos/${new ObjectID().toHexString()}`)
             .expect(404)
             .end(done);         
     });
 
     it('should return 404 if not format ObjectID',(done)=>{
         request(app)
-            .get(`/todos/123abc`)
+            .get(`/api/todos/123abc`)
             .expect(404)
             .end(done);         
     });
@@ -112,7 +112,7 @@ describe('GET /todos/:id',()=>{
 describe('DELTE /todos/:id',()=>{
     it('should return todo doc',(done)=>{
         request(app)
-            .delete(`/todos/${todos[0]._id.toHexString()}`)
+            .delete(`/api/todos/${todos[0]._id.toHexString()}`)
             .expect(200)
             .expect((res)=>{
                 expect(res.body.text).toBe(todos[0].text);
@@ -134,14 +134,14 @@ describe('DELTE /todos/:id',()=>{
 
     it('should return 404 if todo notfound',(done)=>{
         request(app)
-            .delete(`/todos/${new ObjectID().toHexString()}`)
+            .delete(`/api/todos/${new ObjectID().toHexString()}`)
             .expect(404)
             .end(done);         
     });
 
     it('should return 404 if not format ObjectID',(done)=>{
         request(app)
-            .delete(`/todos/123abc`)
+            .delete(`/api/todos/123abc`)
             .expect(404)
             .end(done);         
     });
@@ -152,7 +152,7 @@ describe('PATCH /todos/:id',()=>{
     it('should todo is completed',(done)=>{
         var text = "Update Test text";
         request(app)
-            .patch(`/todos/${todos[0]._id.toHexString()}`)
+            .patch(`/api/todos/${todos[0]._id.toHexString()}`)
             .send({
                 completed:true,
                 text
@@ -169,7 +169,7 @@ describe('PATCH /todos/:id',()=>{
     it('should clear completedAt when todo is not completed',(done)=>{
         var text = "Update Test text";
         request(app)
-            .patch(`/todos/${todos[1]._id.toHexString()}`)
+            .patch(`/api/todos/${todos[1]._id.toHexString()}`)
             .send({
                 completed:false,
                 text
@@ -185,7 +185,7 @@ describe('PATCH /todos/:id',()=>{
 
     it('should return 404 if todo notfound',(done)=>{
         request(app)
-            .patch(`/todos/${new ObjectID().toHexString()}`)
+            .patch(`/api/todos/${new ObjectID().toHexString()}`)
             .send({})
             .expect(404)
             .end(done);         
@@ -193,7 +193,7 @@ describe('PATCH /todos/:id',()=>{
 
     it('should return 404 if not format ObjectID',(done)=>{
         request(app)
-            .patch(`/todos/123abc`)
+            .patch(`/api/todos/123abc`)
             .send({})
             .expect(404)
             .end(done);         
