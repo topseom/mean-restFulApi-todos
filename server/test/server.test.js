@@ -122,9 +122,11 @@ describe('DELTE /todos/:id',()=>{
                     return done(err);
                 }
                 Todo.findById(todos[0]._id.toHexString()).then(todo=>{
-                    expect(todo).toNoExist();
+                    expect(todo).toBe(null);
                     done();
                 },err=>{
+                    done(err);
+                }).catch(err=>{
                     done(err);
                 })
             });
@@ -145,3 +147,55 @@ describe('DELTE /todos/:id',()=>{
     });
 });
 
+describe('PATCH /todos/:id',()=>{
+
+    it('should todo is completed',(done)=>{
+        var text = "Update Test text";
+        request(app)
+            .patch(`/todos/${todos[0]._id.toHexString()}`)
+            .send({
+                completed:true,
+                text
+            })
+            .expect(200)
+            .expect((res)=>{
+                expect(res.body.text).toBe(text);
+                expect(res.body.completed).toBe(true);
+                expect(res.body.completedAt).toBeGreaterThan(1);
+            })
+            .end(done);
+    });
+
+    it('should clear completedAt when todo is not completed',(done)=>{
+        var text = "Update Test text";
+        request(app)
+            .patch(`/todos/${todos[1]._id.toHexString()}`)
+            .send({
+                completed:false,
+                text
+            })
+            .expect(200)
+            .expect((res)=>{
+                expect(res.body.text).toBe(text);
+                expect(res.body.completed).toBe(false);
+                expect(res.body.completedAt).toBe(null);
+            })
+            .end(done);
+    });
+
+    it('should return 404 if todo notfound',(done)=>{
+        request(app)
+            .patch(`/todos/${new ObjectID().toHexString()}`)
+            .send({})
+            .expect(404)
+            .end(done);         
+    });
+
+    it('should return 404 if not format ObjectID',(done)=>{
+        request(app)
+            .patch(`/todos/123abc`)
+            .send({})
+            .expect(404)
+            .end(done);         
+    });
+});
