@@ -6,13 +6,18 @@ if(env == 'development'){
 }else if(env == 'production'){
     process.env.MONGODB_URI = 'mongodb://monchai:seven77889900@ds243805.mlab.com:43805/demo-todo';
 }
+
+
 const express = require('express');
 const bodyParser = require('body-parser');
 
+var allowCrossDomain = require('./header');
 var {mongoose} = require('./db/mongoose');
 var todos = require('./routes/todos');
 
 var app = express();
+
+app.use(allowCrossDomain);
 var port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
