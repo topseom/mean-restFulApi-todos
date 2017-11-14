@@ -12,7 +12,6 @@ var decoded = jwt.verify(token,'123abc');
 console.log(decoded);
 
 
-
 // How to Json Web Token
 // var message = 'I am user number 3';
 // var hash = SHA256(message).toString();

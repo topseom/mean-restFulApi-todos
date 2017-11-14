@@ -2,9 +2,14 @@ const express = require('express');
 const router = express.Router();
 const _ = require('lodash');
 const {User} = require('../models/user');
+const {authenticate} = require('../middleware/autheticate');
 
 router.get("/users",(req,res)=>{
     res.send('hello user!');
+});
+
+router.get("/users/me",authenticate,(req,res)=>{
+    res.send(req.user);
 });
 
 router.post("/users",(req,res)=>{
