@@ -183,7 +183,7 @@ describe('PATCH /todos/:id',()=>{
     });
 });
 
-describe('Get /users/me',()=>{
+describe('GET /users/me',()=>{
     it('should return user authenticated',(done)=>{
         request(app)
             .get(`/api/users/me`)
@@ -207,7 +207,7 @@ describe('Get /users/me',()=>{
     });
 });
 
-describe('Post /users',()=>{
+describe('POST /users',()=>{
     it('should create a user',(done)=>{
         var email = 'example@example.com';
         var password = '123mnb!';
@@ -247,7 +247,7 @@ describe('Post /users',()=>{
             .end(done());
     });
 
-    it('should not create if email in use',(done)=>{
+    /*it('should not create if email in use',(done)=>{
         var email = users[0].email;
         var password = 'Password123';
 
@@ -256,5 +256,60 @@ describe('Post /users',()=>{
             .send({email,password})
             .expect(400)
             .end(done());
+    });*/
+});
+
+describe('POST /users/login',()=>{
+    it('should login user and return auth token',(done)=>{
+        var email = users[1].email;
+        var password = users[1].password;
+
+        request(app)
+            .post(`/api/users/login`)
+            .send({email,password})
+            .expect(200)
+            .expect((res)=>{
+                expect(res.header['x-auth']).toBeDefined();
+            })
+            .end((err,res)=>{
+                if(err){
+                    return done(err);
+                }
+
+                User.findById(users[1]._id).then(user=>{
+                    expect(user.tokens[0]).toInclude({
+                        access:'auth',
+                        token:res.header['x-auth']
+                    })
+                    done();
+                }).catch(e=>{
+                    done();
+                })
+            });
+    });
+
+    it('should return 400 if not authenticated',(done)=>{
+        var email = users[1].email;
+        var password = users[1].password+'1';
+
+        request(app)
+            .post(`/api/users/login`)
+            .send({email,password})
+            .expect(400)
+            .expect((res)=>{
+                expect(res.header['x-auth']).not.toBeDefined();
+            })
+            .end((err,res)=>{
+                if(err){
+                    return done(err);
+                }
+
+                User.findById(users[1]._id).then(user=>{
+                    expect(user.tokens.length).toBe(0);
+                    done();
+                }).catch(e=>{
+                    done();
+                })
+            });
     });
 });
