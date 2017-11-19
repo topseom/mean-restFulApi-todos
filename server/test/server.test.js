@@ -15,6 +15,7 @@ describe('POST /todos',()=>{
         var text = 'Test todo text';
         request(app)
             .post('/api/todos')
+            .set('x-auth',users[0].tokens[0].token)
             .send({text})
             .expect(200)
             .expect((res)=>{
@@ -37,6 +38,7 @@ describe('POST /todos',()=>{
     it('should not create todo with invalid body data',(done)=>{
         request(app)
         .post('/api/todos')
+        .set('x-auth',users[0].tokens[0].token)
         .send({})
         .expect(400)
         .end((err,res)=>{
@@ -58,9 +60,10 @@ describe('GET /todos',()=>{
     it('should get all todos',(done)=>{
         request(app)
             .get('/api/todos')
+            .set('x-auth',users[0].tokens[0].token)
             .expect(200)
             .expect((res)=>{
-                expect(res.body.length).toBe(2)
+                expect(res.body.length).toBe(1)
             })
             .end(done);
     });
@@ -70,6 +73,7 @@ describe('GET /todos/:id',()=>{
     it('should return todo doc',(done)=>{
         request(app)
             .get(`/api/todos/${todos[0]._id.toHexString()}`)
+            .set('x-auth',users[0].tokens[0].token)
             .expect(200)
             .expect((res)=>{
                 expect(res.body.text).toBe(todos[0].text);
@@ -80,6 +84,7 @@ describe('GET /todos/:id',()=>{
     it('should return 404 if todo notfound',(done)=>{
         request(app)
             .get(`/api/todos/${new ObjectID().toHexString()}`)
+            .set('x-auth',users[0].tokens[0].token)
             .expect(404)
             .end(done);         
     });
@@ -87,6 +92,7 @@ describe('GET /todos/:id',()=>{
     it('should return 404 if not format ObjectID',(done)=>{
         request(app)
             .get(`/api/todos/123abc`)
+            .set('x-auth',users[0].tokens[0].token)
             .expect(404)
             .end(done);         
     });
@@ -96,6 +102,7 @@ describe('DELTE /todos/:id',()=>{
     it('should return todo doc',(done)=>{
         request(app)
             .delete(`/api/todos/${todos[0]._id.toHexString()}`)
+            .set('x-auth',users[0].tokens[0].token)
             .expect(200)
             .expect((res)=>{
                 expect(res.body.text).toBe(todos[0].text);
@@ -118,6 +125,7 @@ describe('DELTE /todos/:id',()=>{
     it('should return 404 if todo notfound',(done)=>{
         request(app)
             .delete(`/api/todos/${new ObjectID().toHexString()}`)
+            .set('x-auth',users[0].tokens[0].token)
             .expect(404)
             .end(done);         
     });
@@ -125,6 +133,7 @@ describe('DELTE /todos/:id',()=>{
     it('should return 404 if not format ObjectID',(done)=>{
         request(app)
             .delete(`/api/todos/123abc`)
+            .set('x-auth',users[0].tokens[0].token)
             .expect(404)
             .end(done);         
     });
@@ -136,6 +145,7 @@ describe('PATCH /todos/:id',()=>{
         var text = "Update Test text";
         request(app)
             .patch(`/api/todos/${todos[0]._id.toHexString()}`)
+            .set('x-auth',users[0].tokens[0].token)
             .send({
                 completed:true,
                 text
@@ -153,6 +163,7 @@ describe('PATCH /todos/:id',()=>{
         var text = "Update Test text";
         request(app)
             .patch(`/api/todos/${todos[1]._id.toHexString()}`)
+            .set('x-auth',users[1].tokens[0].token)
             .send({
                 completed:false,
                 text
@@ -169,6 +180,7 @@ describe('PATCH /todos/:id',()=>{
     it('should return 404 if todo notfound',(done)=>{
         request(app)
             .patch(`/api/todos/${new ObjectID().toHexString()}`)
+            .set('x-auth',users[0].tokens[0].token)
             .send({})
             .expect(404)
             .end(done);         
@@ -177,6 +189,7 @@ describe('PATCH /todos/:id',()=>{
     it('should return 404 if not format ObjectID',(done)=>{
         request(app)
             .patch(`/api/todos/123abc`)
+            .set('x-auth',users[0].tokens[0].token)
             .send({})
             .expect(404)
             .end(done);         
@@ -244,7 +257,7 @@ describe('POST /users',()=>{
             .post('/api/users')
             .send({email,password})
             .expect(400)
-            .end(done());
+            .end(done);
     });
 
     /*it('should not create if email in use',(done)=>{
@@ -277,7 +290,7 @@ describe('POST /users/login',()=>{
                 }
 
                 User.findById(users[1]._id).then(user=>{
-                    expect(user.tokens[0]).toInclude({
+                    expect(user.tokens[1]).toInclude({
                         access:'auth',
                         token:res.header['x-auth']
                     })
@@ -305,7 +318,7 @@ describe('POST /users/login',()=>{
                 }
 
                 User.findById(users[1]._id).then(user=>{
-                    expect(user.tokens.length).toBe(0);
+                    expect(user.tokens.length).toBe(1);
                     done();
                 }).catch(e=>{
                     done();
