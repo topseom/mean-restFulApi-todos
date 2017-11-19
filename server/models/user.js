@@ -35,6 +35,18 @@ var UserSchema = new mongoose.Schema({
     }]
 });
 
+UserSchema.methods.removeToken = function(toekn){
+    var user = this;
+    
+    return user.update({
+        $pull:{
+            tokens:{
+                toekn
+            }
+        }
+    })
+}
+
 UserSchema.methods.toJSON = function(){
     var user = this;
     var userObject = user.toObject();
